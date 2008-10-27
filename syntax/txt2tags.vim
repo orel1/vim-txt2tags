@@ -1,15 +1,15 @@
 " Vim syntax file
 " Filename: txt2tags.vim
 " Language: marked text for conversion by txt2tags
-" Maintainer: Aurelio Marinho Jargas
-" Last change: 20040714 - v2.0, beauty, =heading=[anchor], install, numfold
+" Maintainer: Aurelio Jargas
+" Last change: 20060801 - v2.3.2 t2tCommentArea, %!include & macro start body
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " INFO:
 "
 " - This is the txt2tags VIM syntax file.
 " - It's a syntax file just like those for programming languages as C
-"   or python, so you know it's handy.
+"   or Python, so you know it's handy.
 " - Here are registered all the structures for txt2tags marks.
 " - When composing your text file, the marks will be highlighted,
 "   helping you to quickly make error-free txt2tags files.
@@ -73,18 +73,17 @@ syn case ignore
 "TODO2 learn vim language :/
 
 syn cluster t2tComponents  contains=t2tNumber,t2tPercent,t2tMacro,t2tImg,t2tEmail,t2tUrl,t2tUrlMark,t2tUrlMarkImg,t2tUrlLocal
-syn cluster t2tBeautifiers contains=t2tUnderline,t2tItalic,t2tBold,t2tMonospace,t2tRaw
+syn cluster t2tBeautifiers contains=t2tStrike,t2tUnderline,t2tItalic,t2tBold,t2tMonospace,t2tRaw
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "LIST:
-syn match t2tList    '^ *[-+:]'
-"syn match t2tList    '^ *[+-] [^ ]'me=e-1
-"syn match t2tDefListId contained '^ *: '
-"syn match t2tDefList '^ *: .*\S.*' contains=t2tDefListId,@t2tComponents,@t2tBeautifiers
+syn match t2tList    '^ *[-+:]\s*$'
+syn match t2tList    '^ *: '
+syn match t2tList    '^ *[+-] [^ ]'me=e-1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "TITLE:
-syn match t2tTitleRef  contained '\[[a-z0-9_-]*\]$'
+syn match t2tTitleRef  contained '\[[a-z0-9_-]*\]\s*$'
 syn match t2tTitleMark contained '^ *=\+'
 syn match t2tTitleMark contained '=\+\s*$'
 syn match t2tTitleMark contained '=\+\['me=e-1,he=e-1
@@ -102,7 +101,7 @@ syn match t2tEmail '\<[A-Za-z0-9_.-]\+@\([A-Za-z0-9_-]\+\.\)\+[A-Za-z]\{2,4}\>\(
 syn match t2tUrl   '\<\(\(https\=\|ftp\|news\|telnet\|gopher\|wais\)://\([A-Za-z0-9._-]\+\(:[^ @]*\)\=@\)\=\|\(www[23]\=\.\|ftp\.\)\)[A-Za-z0-9%._/~:,=$@&-]\+\>/*\(?[A-Za-z0-9/%&=+;.,@*_-]\+\)\=\(#[A-Za-z0-9%._-]\+\)\='
 syn match t2tUrlLocal contained ' \([A-Za-z0-9%._/~,-]\+\|[A-Za-z0-9%._/~,-]*#[A-Za-z0-9%._-]\+\)\]'ms=s+1,me=e-1
 syn match t2tUrlMark '\[[^]]\+ [^] ]\+\]' contains=t2tUrlLabel,t2tUrl,t2tEmail,t2tUrlLocal
-syn match t2tUrlMarkImg '\[\[[[:alnum:]_,.+%$#@!?+~/-]\+\.\(png\|jpe\=g\|gif\|eps\|bmp\)\] [^] ]\+\]' contains=t2tUrl,t2tEmail,t2tUrlLocal,t2tImg
+syn match t2tUrlMarkImg '\[\[[[:alnum:]_,.+%$#@!?+~/-]\+\.\(png\|jpe\=g\|gif\|eps\|bmp\)\( \+"[^"]*"\)\{0,1\}\] [^] ]\+\]' contains=t2tUrl,t2tEmail,t2tUrlLocal,t2tImg
 syn match t2tUrlLabel contained '\[[^]]\+ 'ms=s+1,me=e-1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -110,6 +109,7 @@ syn match t2tUrlLabel contained '\[[^]]\+ 'ms=s+1,me=e-1
 syn match   t2tBold       '\*\*\S\(\|.\{-}\S\)\*\*\+'hs=s+2,he=e-2
 syn match   t2tItalic       '//\S\(\|.\{-}\S\)//\+'hs=s+2,he=e-2
 syn match   t2tUnderline    '__\S\(\|.\{-}\S\)__\+'hs=s+2,he=e-2
+syn match   t2tStrike       '--\S\(\|.\{-}\S\)--\+'hs=s+2,he=e-2
 syn match   t2tMonospace    '``\S\(\|.\{-}\S\)``\+'hs=s+2,he=e-2
 syn match   t2tRaw          '""\S\(\|.\{-}\S\)""\+'hs=s+2,he=e-2
 syn match   t2tPassthru     "''\S\(\|.\{-}\S\)''\+"hs=s+2,he=e-2
@@ -119,26 +119,35 @@ syn match   t2tPassthru1Line "^''' .*$"hs=s+3
 syn region  t2tVerbArea     start='^```\s*$'hs=s+3 end='^```\s*$'he=e-3
 syn region  t2tRawArea      start='^"""\s*$'hs=s+3 end='^"""\s*$'he=e-3
 syn region  t2tPassthruArea start="^'''\s*$"hs=s+3 end="^'''\s*$"he=e-3
+syn match   t2tComment '^%.*$' contains=t2tTodo,t2tFoldMark,t2tIncluded
+syn region  t2tCommentArea  start="^%%%\s*$" end="^%%%\s*$"
+
+"Experimental
+syn region  t2tTableArea  start="^|||\s*$" end="^|||\s*$" contains=t2tTableTab,t2tComment
+syn match   t2tTableTab '\t' contained
+"hi t2tTableTab    term=reverse     cterm=reverse     gui=reverse
+"hi link t2tTableArea  Statement
+set list listchars=tab:··
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "TABLE:
 syn match   t2tTableAlign contained ' \+$'
 syn match   t2tTableMark  contained '^ *[^ ]\+'
-syn match   t2tTableBar   contained ' | '     contains=t2tBlank
-syn match   t2tTableBar   contained '|\s*$'   contains=t2tBlank
+syn match   t2tTableBar   contained ' |\+ '     contains=t2tBlank
+syn match   t2tTableBar   contained '|\+\s*$'   contains=t2tBlank
 syn match   t2tTableTit   contained '^ *||.*' contains=t2tTableMark,t2tTableBar,t2tTableAlign
 syn match   t2tTable             '^ *||\= .*' contains=t2tTableMark,t2tTableBar,t2tTableTit,@t2tBeautifiers,@t2tComponents,t2tTableAlign
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "MISC:
 syn keyword t2tTodo    TODO FIXME XXX contained
-syn match   t2tComment '^%.*$' contains=t2tTodo,t2tFoldMark,t2tIncluded
 syn match   t2tNumber  '\<\d\+\([,.]\d\+\)\{,1}\>'
 syn match   t2tPercent '\<\d\+\([,.]\d\+\)\{,1}%'
 syn match   t2tBlank   '\s\+$'
 syn match   t2tQuote   '^\t\+'
 syn match   t2tBar     '^\s*[_=-]\{20,}\s*$' contains=t2tQuote
-syn match   t2tImg     '\[[[:alnum:]_,.+%$#@!?+~/-]\+\.\(png\|jpe\=g\|gif\|eps\|bmp\)\]'
+syn match   t2tImg     '\[[[:alnum:]_,.+%$#@!?+~/-]\+\.\(png\|jpe\=g\|gif\|eps\|bmp\)\( \+"[^"]*"\)\{0,1\}\]'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "MACROS AND COMMANDS:
@@ -147,7 +156,7 @@ syn match   t2tMacro    '%%\(date\|mtime\|infile\|outfile\)\>\(([^)]*)\)\='
 syn match   t2tMacro    '^ *%%toc\s*$'
 syn match   t2tIncluded '^%INCLUDED([a-z2]\+)'ms=s+1 contained 
 syn match   t2tIncluded '^%--\{10,} Area Delimiter:'ms=s+1 contained 
-syn match   t2tCommand  "^%!\s*include\s*\((\(\|txt\|html\|xhtml\|sgml\|tex\|mgp\|man\|moin\|pm6\))\)\=\s*:\s*\S"me=e-1 contains=t2tTargets
+syn match   t2tCommand  "^%!\s*include\s*\((\(\|txt\|html\|xhtml\|sgml\|lout\|tex\|mgp\|man\|moin\|pm6\|wiki\|gwiki\|doku\))\)\=\s*:\s*\S"me=e-1 contains=t2tTargets
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "FOLD:
@@ -164,21 +173,22 @@ syn region t2tNumtitleFold transparent fold start='^ *+[^+].*[^+]+\(\[[a-z0-9_-]
 "Headers are the first 3 lines
 "Config are special comments right after the headers
 "Config Area ends on a no-comment and no-blank line
-syn keyword t2tTargets    contained txt xhtml html sgml tex mgp man moin pm6
+syn keyword t2tTargets    contained txt xhtml html sgml tex lout mgp man
+syn keyword t2tTargets    contained moin pm6 wiki gwiki doku
 syn match t2tConfigString contained +"[^"]*"\|'[^']*'+
 syn match t2tConfigValue  contained ':.*'ms=s+1 contains=t2tConfigString
 syn match t2tConfigKey    contained '^%![^:]\+:' contains=t2tTargets
-syn match t2tConfigLine   contained "^%!\s*\(encoding\|style\|preproc\|postproc\|includeconf\|options\)\s*\((\s*\(\|txt\|html\|xhtml\|sgml\|tex\|mgp\|man\|moin\|pm6\)\s*)\)\=\s*:\s*\S.*" contains=t2tConfigKey,t2tConfigValue,t2tConfigString
+syn match t2tConfigLine   contained "^%!\s*\(encoding\|style\|preproc\|postproc\|includeconf\|options\)\s*\((\s*\(\|txt\|html\|xhtml\|sgml\|tex\|lout\|mgp\|man\|moin\|pm6\)\s*)\)\=\s*:\s*\S.*" contains=t2tConfigKey,t2tConfigValue,t2tConfigString
 syn match t2tConfigLine   contained "^%!\s*target\s*:\s*\S.*" contains=t2tConfigKey,t2tTargets
 syn match t2tConfigLine   contained "^%!\s*guicolors\s*:\s*\(\S\+\s\+\)\{3}\S\+\s*$" contains=t2tConfigKey,t2tTargets
 
 syn match  t2tHeaderArea  contained '\%^.*\n.*\n.*$' contains=t2tMacro
-syn region t2tConfigArea         contained start='\%4l' end='^\%>3l[^%]'me=e-1  contains=t2tComment,t2tConfigLine,t2tConfig1
-syn region t2tConfigAreaNoHeader contained start='\%2l' end='^\%>1l[^%]'me=e-1 contains=t2tComment,t2tConfigLine,t2tConfig1
+syn region t2tConfigArea         contained start='\%4l' end='^\%>3l[^%]'me=e-1 end='^\%>3l%!include[^c]'me=e-10 end='%%\(date\|mtim\|infi\|outf\)'me=e-6 contains=t2tComment,t2tConfigLine,t2tConfig1
+syn region t2tConfigAreaNoHeader contained start='\%2l' end='^\%>1l[^%]'me=e-1 end='^\%>1l%!include[^c]'me=e-10 end='%%\(date\|mtim\|infi\|outf\)'me=e-6 contains=t2tComment,t2tConfigLine,t2tConfig1
 
-"TODO %!include ends CONF area  end='^%!\s*include\s*\(([a-z]*)\)\=\s*:'
-syn region t2tTopArea       start='\%^\s*\S' end='^[^%]'me=e-1 contains=t2tHeaderArea,t2tConfigArea
-syn region t2tTopAreaNoHead start='\%^\s*$'  end='^[^%]'me=e-1 contains=t2tConfigAreaNoHeader
+
+syn region t2tTopArea       start='\%^\s*\S' end='^[^%]'me=e-1 end='^%!include[^c]'me=e-10 end='%%\(date\|mtim\|infi\|outf\)'me=e-6 contains=t2tHeaderArea,t2tConfigArea
+syn region t2tTopAreaNoHead start='\%^\s*$'  end='^[^%]'me=e-1 end='^%!include[^c]'me=e-10 end='%%\(date\|mtim\|infi\|outf\)'me=e-6 contains=t2tConfigAreaNoHeader
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
@@ -194,11 +204,12 @@ hi link t2t_Passthru   Special
 hi t2tBar         term=bold        cterm=bold        gui=bold
 hi t2tBold        term=bold        cterm=bold        gui=bold
 hi t2tItalic      term=italic      cterm=italic      gui=italic
+hi t2tStrike      term=italic      cterm=italic      gui=italic
 hi t2tUnderline   term=underline   cterm=underline   gui=underline
 hi t2tQuote       term=reverse     cterm=reverse     gui=reverse
 hi t2tTableAlign  term=reverse     cterm=reverse     gui=reverse
-"hi t2tBoldItalic  term=bold,italic cterm=bold,italic gui=bold,italic
 hi t2tComment     ctermfg=brown    guifg=brown
+hi t2tCommentArea ctermfg=brown    guifg=brown
 "
 " color definitions (using Vim defaults)
 hi link t2tTitle         Error
@@ -229,9 +240,7 @@ hi link t2tTitleRef      t2t_Link
 hi link t2tMacro         t2t_Component
 hi link t2tImg           t2t_Component
 hi link t2tList          t2t_Component
-hi link t2tDefListId     t2t_Component
 hi link t2tMacro         t2t_Component
-hi link t2tDefList       NONE
 hi link t2tTitleMark     NONE
 hi link t2tVerbArea      t2t_Verb
 hi link t2tVerb1Line     t2t_Verb
