@@ -59,10 +59,6 @@
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-
-"FOLD: just uncomment the following line if you like to use Vim fold
-"set foldmethod=syntax
-
 if exists("b:current_syntax")
     finish
 endif
@@ -71,9 +67,6 @@ endif
 syn clear
 syn sync minlines=500
 syn case ignore
-
-"TODO see if user already has foldmethod defined, if so, set foldmethod=syntax
-"TODO2 learn vim language :/
 
 syn cluster t2tComponents  contains=t2tNumber,t2tPercent,t2tMacro,t2tImg,t2tEmail,t2tUrl,t2tUrlMark,t2tUrlMarkImg,t2tUrlLocal
 syn cluster t2tBeautifiers contains=t2tStrike,t2tUnderline,t2tItalic,t2tBold,t2tMonospace,t2tRaw
@@ -167,9 +160,11 @@ syn match  t2tFoldMark '\({{{\|}}}\)$'
 syn region t2tUserFold keepend transparent fold start='^%.\+{{{$' end='^%.*}}}$'
 syn region t2tTitleFold    transparent fold start='^ *=[^=].*[^=]=\(\[[a-z0-9_-]*\]\)\=\s*$' end='\n\n\n\n'
 syn region t2tNumtitleFold transparent fold start='^ *+[^+].*[^+]+\(\[[a-z0-9_-]*\]\)\=\s*$' end='\n\n\n\n'
-"heavy-folding-users: uncomment the following to fold *every* subtitle area
-"syn region t2tTitleFoldDeep transparent fold start='^ *\(=\{2,5}\)[^=].*[^=]\1$' end='\n\n\n\n'
-"syn region t2tNumtitleFoldDeep transparent fold start='^ *\(+\{2,5}\)[^+].*[^+]\1$' end='\n\n\n\n'
+
+if g:txt2tags_fold_every_subtitle
+    syn region t2tTitleFoldDeep transparent fold start='^ *\(=\{2,5}\)[^=].*[^=]\1$' end='\n\n\n\n'
+    syn region t2tNumtitleFoldDeep transparent fold start='^ *\(+\{2,5}\)[^+].*[^+]\1$' end='\n\n\n\n'
+endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "HEADERS AND CONFIG:
@@ -222,8 +217,12 @@ hi default link t2tCommentArea t2tComment
 " color definitions (using Vim defaults)
 hi default link t2tTitle         Statement
 hi default link t2tNumTitle      Statement
-" comment the following line to avoid having trailing whitespaces in red
-hi default link t2tBlank         Error
+
+if g:txt2tags_trailing_whitespaces
+    " highlight trailing whitespaces in red
+    hi default link t2tBlank         Error
+endif
+
 hi default link t2tNumber        Number
 hi default link t2tPercent       Number
 hi default link t2tFoldMark      Special
