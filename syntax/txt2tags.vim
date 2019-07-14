@@ -63,6 +63,9 @@
 "FOLD: just uncomment the following line if you like to use Vim fold
 "set foldmethod=syntax
 
+if exists("b:current_syntax")
+    finish
+endif
 
 " init
 syn clear
