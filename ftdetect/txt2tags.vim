@@ -1,1 +1,1 @@
-autocmd BufNewFile,BufRead *.txt2tags,*.t2t setf txt2tags
+autocmd BufNewFile,BufRead *.txt2tags,*.txt2t,*.t2t setf txt2tags
