@@ -217,8 +217,8 @@ endif
 hi default link t2tCommentArea t2tComment
 "
 " color definitions (using Vim defaults)
-hi default link t2tTitle         Error
-hi default link t2tNumTitle      Error
+hi default link t2tTitle         Statement
+hi default link t2tNumTitle      Statement
 " comment the following line to avoid having trailing whitespaces in red
 hi default link t2tBlank         Error
 hi default link t2tNumber        Number
