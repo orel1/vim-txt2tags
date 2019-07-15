@@ -34,30 +34,6 @@
 "     - The fold ends with the "% }}}" comment
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" INSTALL: (as user)
-"
-" - Copy this file to the ~/.vim/syntax/ dir (create it if necessary)
-"
-" - Put in your .vimrc the following line:
-"   au BufNewFile,BufRead *.t2t set ft=txt2tags
-"
-" If you use other extension for txt2tags files, change the '*.t2t'
-"
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" INSTALL: (as superuser)
-"
-" If you have access to the system configuration, edit the
-" /usr/share/vim/vim*/filetype.vim file, adding the following
-" lines after the 'Z-Shell script' entry (near the end):
-"
-"   " txt2tags file
-"   au BufNewFile,BufRead *.t2t                 setf txt2tags
-"
-" And copy this file (txt2tags.vim) to the Vim syntax dir:
-"
-"   /usr/share/vim/vim*/syntax/
-"
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 if exists("b:current_syntax")
     finish
