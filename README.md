@@ -25,6 +25,7 @@ Configuration
 Some behaviors can be customized by changing the default values of variables in
 your `vimrc`.
 
+
 ### Folding
 
 There are two kinds of folding rules define in the syntax file:
@@ -43,6 +44,28 @@ By default and if folding is enabled, only the first two title levels are
 folded. To fold *all* subtitle levels add this:
 
     let g:txt2tags_fold_every_subtitle = 1
+
+
+### Compiler
+
+This plugin provides a compiler for txt2tags files (see `:h compiler`).
+
+The default compilation program is `txt2tags`, but it is also possible to use
+`pandoc`:
+
+    let g:txt2tags_executable = "pandoc"
+
+The default output format is 'html', but it is possible to define something
+else:
+
+    let g:txt2tags_exec_options = "-t\\ man"
+
+The default extension used for the output file is '.html', but it is possible
+to modify it, or even to leave it empty if the compilation program is `txt2tags`.
+This extension is only necessary for `pandoc`.
+
+    let g:txt2tags_output_ext = ".html"
+
 
 ### Misc
 

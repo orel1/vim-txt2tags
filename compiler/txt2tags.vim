@@ -24,8 +24,8 @@ endif
 
 if !exists('g:txt2tags_exec_options')
     " default value (understand by txt2tags and pandoc)
-    " → We need a '\' to escape spaces in 'makeprg', and we need a '\' to
-    " escape '\' (see ':h variables').
+    " Syntax explanation: We need a '\' to escape spaces in 'makeprg', and we
+    " need a '\' to escape '\' (see ':h variables').
     let g:txt2tags_exec_options = "-t\\ html"
 endif
 
