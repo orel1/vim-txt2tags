@@ -99,7 +99,6 @@ syn region  t2tTableArea  start="^|||\s*$" end="^|||\s*$" contains=t2tTableTab,t
 syn match   t2tTableTab '\t' contained
 "hi t2tTableTab    term=reverse     cterm=reverse     gui=reverse
 "hi link t2tTableArea  Statement
-set list listchars=tab:··
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
